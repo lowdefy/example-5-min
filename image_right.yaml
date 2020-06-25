@@ -1,0 +1,34 @@
+id: box_right
+type: Box
+style:
+  --span: 6
+  backgroundColor: '#000'
+  borderLeft: '7vw solid #1890ff'
+  position: fixed
+  width: 50%
+  right: 0
+  md:
+    display: none
+  Content:
+    display: flex
+    overflow: hidden
+blocks:
+  - id: box_img
+    type: Html
+    style:
+      minHeight: 100vh
+      borderLeft: '5vw solid #000'
+      overflow: hidden
+      opacity: 1
+      animationName: fadeInOpacity
+      animationIterationCount: 1
+      animationTimingFunction: ease-in
+      animationDuration: 1s
+      '@keyframes fadeInOpacity':
+        '0%':
+          opacity: 0
+        '100%':
+          opacity: 1
+    properties:
+      html:
+        _var: html

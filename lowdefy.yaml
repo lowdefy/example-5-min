@@ -1,0 +1,181 @@
+connections:
+  - id: transactions
+    type: MongoDBCollection
+    properties:
+      databaseUri:
+        _secret: mongodb_company
+      databaseName: company
+      collection: sales
+      read: true
+      write: true
+
+global:
+  currency_format:
+    type: intlNumberFormat
+    properties:
+      locale: en-US
+      options:
+        style: currency
+        currency: USD
+
+menus:
+  - id: main_menu
+    links:
+      - id: dashboard
+        type: MenuLink
+        pageId: dashboard
+        properties:
+          title: Dashboard
+          Icon: LineChartOutlined
+      - id: all-transactions
+        type: MenuLink
+        pageId: all-transactions
+        properties:
+          title: Transactions
+          Icon: ShoppingCartOutlined
+
+pages:
+  - _ref: survey.yaml
+  - _ref: dashboard.yaml
+
+  - id: all-transactions
+    type: PageHeaderMenu
+    actions:
+      onEnter:
+        - id: get_all_transactions
+          type: fetch()
+          params: get_transactions
+
+    requests:
+      - id: get_one_transaction
+        type: MongoDBFindOne
+        connectionId: transactions
+        properties:
+          query:
+            _id:
+              _state: transaction._id
+      - id: get_transactions
+        type: MongoDBAggregation
+        connectionId: transactions
+        properties:
+          pipeline:
+            - $unwind: $items
+            - $group:
+                _id: $_id
+                total: 
+                  $sum: $items.price
+                saleDate: 
+                  $first: $saleDate
+                numItems: 
+                  $sum: $items.quantity
+                storeLocation: 
+                  $first: $storeLocation
+                customer: 
+                  $first: $customer
+                couponUsed: 
+                  $first: $couponUsed
+                purchaseMethod: 
+                  $first: $purchaseMethod
+            - $addFields: 
+                total: 
+                  $toDouble: $total
+            - $limit: 50
+
+    blocks:
+      - id: title
+        type: Title
+        properties:
+          content: All Transactions
+
+      - id: all_transactions
+        style:
+          --span: 8
+        type: AgGrid
+        properties:
+          theme: basic
+          rowData:
+            _request: get_transactions
+          columnDefs:
+            - headerName: Location
+              field: storeLocation
+            - headerName: Satisfaction
+              field: customer.satisfaction
+              type: numericColumn
+              width: 150
+            - headerName: Coupon
+              field: couponUsed
+              width: 150
+            - headerName: Total
+              width: 150
+              field: total
+              type: numericColumn
+              valueFormatter:
+                _global: currency_format
+          defaultColDef:
+            filter: true
+            resizable: true
+            sortable: true
+        actions:
+          onRowClick:
+            - id: set_selected
+              type: setState()
+              params:
+                transaction:
+                  _id:
+                    _args: row._id
+            - id: get_transaction
+              type: fetch()
+              params: get_one_transaction
+            - id: set_selected
+              type: setState()
+              params:
+                transaction:
+                  _request: get_one_transaction
+
+      - id: card_transaction
+        type: Card
+        style:
+          --span: 4
+        properties:
+          title: Transaction Breakdown
+        blocks:
+          Content:
+            - id: transaction_data
+              type: Markdown
+              properties:
+                content:
+                  _nunjucks: 
+                    template: |
+                      ### Satisfaction Rating: {{customer.satisfaction}}
+                      ### Details
+                      - __Date:__ {{ saleDate | date('DD-MM-YYYY') }}
+                      - __Email:__ {{ customer.email }}
+                      - __Location:__ {{ storeLocation }}
+                      - __Channel:__ {{ purchaseMethod }}
+
+                      ### Basket
+                      {% for item in items %}
+                      - {{ item.name }}: {{ item.quantity }} @ ${{ item.price.$numberDecimal }} {% endfor %}
+                    on:
+                      _state: transaction
+          Extra:
+            - id: Email
+              type: Button
+              actions:
+                onClick:
+                  - id: open
+                    type: callMethod()
+                    params: 
+                      blockId: modal
+                      method: toggleOpen
+          
+            - id: modal
+              type: Modal
+              properties:
+                title: Send Survey
+                okText: Send
+
+
+
+
+

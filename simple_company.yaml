@@ -1,0 +1,145 @@
+connections:
+  - id: customers
+    type: MongoDBCollection
+    properties:
+      databaseUri:
+        _secret: mongodb_company
+      databaseName: company
+      collection: customers
+      read: true
+      write: true
+
+menus:
+  - id: main_menu
+    links:
+      - id: all-customers
+        type: MenuLink
+        pageId: all-customers
+        properties:
+          title: Customers
+          Icon: UserOutlined
+
+pages:
+  - id: all-customers
+    type: PageSiderMenu
+    requests:
+      - id: get_customers
+        type: MongoDBAggregation
+        connectionId: customers
+        properties:
+          pipeline:
+            - $match: {}
+            - $sort:
+                name: 1
+    actions:
+      onEnter:
+        - id: get_all_customers
+          type: fetch()
+          params: get_customers
+          
+    blocks:
+      - id: title
+        type: Title
+        properties:
+          content: All Customers
+      - id: all_customers
+        type: AgGrid
+        properties:
+          theme: basic
+          rowData:
+            _request: get_customers
+          columnDefs:
+            - headerName: Name
+              field: name
+            - headerName: Email
+              field: email
+            - headerName: Products
+              field: products
+          defaultColDef:
+            filter: true
+            resizable: true
+            sortable: true
+        actions:
+          onRowClick:
+            - id: link_customer
+              type: link()
+              params:
+                pageId: customer-details
+                urlQuery:
+                  _id:
+                    _args: row._id
+
+  - id: customer-details
+    type: PageSiderMenu
+    requests:
+      - id: get_one_customer
+        type: MongoDBFindOne
+        connectionId: customers
+        properties:
+          query:
+            _id:
+              _url_query: _id
+    mutations:
+      - id: save_customer
+        type: MongoDBUpdateOne
+        connectionId: customers
+        properties:
+          filter:
+            _id:
+              _state: _id
+          update:
+            $set:
+              products: 
+                _state: products
+    actions:
+      onEnter:
+        - id: get_customer
+          type: fetch()
+          params: get_one_customer
+        - id: set_customer
+          type: setState()
+          params:
+            _request: get_one_customer
+
+    blocks:
+      - id: customer_details
+        type: Descriptions
+        properties:
+          items:
+            _state: true
+          bordered: true
+          column: 1
+      - id: products
+        type: MultipleSelector
+        properties:
+          title: Products
+          options:
+            - Apples
+            - Beer
+            - Bread
+            - Cheese
+            - Sugar
+            - Soda
+            - Salt
+      - id: save
+        type: Button
+        properties:
+          title: Save
+          block: true
+        actions:
+          onClick:
+            - id: save
+              type: mutate()
+              params: save_customer
+            - id: link_all_customers
+              type: link()
+              params:
+                pageId: all-customers
+
+
+
+
+
+
+    
+    
