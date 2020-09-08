@@ -17,7 +17,7 @@ menus:
         pageId: all-customers
         properties:
           title: Customers
-          Icon: UserOutlined
+          icon: UserOutlined
 
 pages:
   - id: all-customers
@@ -34,7 +34,7 @@ pages:
     actions:
       onEnter:
         - id: get_all_customers
-          type: fetch()
+          type: Fetch
           params: get_customers
           
     blocks:
@@ -62,7 +62,7 @@ pages:
         actions:
           onRowClick:
             - id: link_customer
-              type: link()
+              type: Link
               params:
                 pageId: customer-details
                 urlQuery:
@@ -94,10 +94,10 @@ pages:
     actions:
       onEnter:
         - id: get_customer
-          type: fetch()
+          type: Fetch
           params: get_one_customer
         - id: set_customer
-          type: setState()
+          type: SetState
           params:
             _request: get_one_customer
 
@@ -129,10 +129,10 @@ pages:
         actions:
           onClick:
             - id: save
-              type: mutate()
+              type: Mutate
               params: save_customer
             - id: link_all_customers
-              type: link()
+              type: Link
               params:
                 pageId: all-customers
 
@@ -141,5 +141,4 @@ pages:
 
 
 
-    
     

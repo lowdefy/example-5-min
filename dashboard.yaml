@@ -112,8 +112,8 @@ requests:
 blocks:
   - id: bx
     type: Box
-    style:
-      --span: 8
+    layout:
+      span: 16
     blocks:
       - id: title
         type: Markdown
@@ -125,63 +125,55 @@ blocks:
         blocks:
           - id: total_sales
             type: Statistic
-            style:
-              --span: 4
+            layout:
+              span: 8
             properties:
               title: Month's Revenue
               value: 175697
               prefix: "$"
           - id: this_week
             type: Statistic
-            style:
-              --span: 4
-              IconPrefix:
-                color: '#f5222d'
+            layout:
+              span: 8
             properties:
               title: Month on Month Avg
               value: 14
-              IconPrefix: FallOutlined
+              iconPrefix: FallOutlined
               suffix: "%"
           - id: this_ratio
             type: Statistic
-            style:
-              --span: 4
+            layout:
+              span: 8
             properties:
               title: Current Sell Out Ratio
               value: 0.43
-              IconPrefix: 
+              iconPrefix: 
                 name: WarningTwoTone
                 twoToneColor: '#f5222d'
           - id: this_leads
             type: Statistic
-            style:
-              --span: 4
-              IconPrefix:
-                color: '#52c41a'
+            layout:
+              span: 8
             properties:
               title: New Leads This Month
               value: 102
-              IconPrefix: ArrowDownOutlined
+              iconPrefix: ArrowDownOutlined
           - id: this_store
             type: Statistic
-            style:
-              --span: 4
-              IconPrefix:
-                color: '#52c41a'
+            layout:
+              span: 8
             properties:
               title: Top Store (This Month)
               value: Denver
-              IconPrefix: ShopOutlined
+              iconPrefix: ShopOutlined
           - id: this_category
             type: Statistic
-            style:
-              --span: 4
-              IconPrefix:
-                color: '#52c41a'
+            layout:
+              span: 8
             properties:
               title: Top Product (This Month)
               value: Notepad
-              IconPrefix: ShoppingCartOutlined
+              iconPrefix: ShoppingCartOutlined
       
       - id: progress_title
         type: Markdown
@@ -214,8 +206,8 @@ blocks:
 
   - id: bx_product
     type: Box
-    style:
-      --span: 4
+    layout:
+      span: 8
     blocks:
       - id: title_product_pie
         type: Markdown
@@ -224,8 +216,8 @@ blocks:
             #### Sales by Products
       - id: card_product_pie
         type: Card
-        style:
-          justifyItems: center
+        layout:
+          justify: center
         blocks:
           - id: chart_product_pie
             type: AmCharts4Pie
@@ -271,8 +263,8 @@ blocks:
                     category: name
   - id: bx_revenue
     type: Box
-    style: 
-      --span: 6
+    layout: 
+      span: 12
     blocks:
       - id: title_sales_by_month
         type: Markdown
@@ -328,8 +320,8 @@ blocks:
 
   - id: bx_store
     type: Box
-    style: 
-      --span: 6
+    layout: 
+      span: 12
     blocks:
       - id: title_store_by_month
         type: Markdown

@@ -9,6 +9,14 @@ connections:
       read: true
       write: true
 
+### 7
+  - id: sendgrid
+    type: SendGridMail
+    properties:
+      apiKey: 
+        _secret: lowdefy_sendgrid
+      from: followup@mail.lowdefy.com
+
 global:
   currency_format:
     type: intlNumberFormat
@@ -26,13 +34,13 @@ menus:
         pageId: dashboard
         properties:
           title: Dashboard
-          Icon: LineChartOutlined
+          icon: LineChartOutlined
       - id: all-transactions
         type: MenuLink
         pageId: all-transactions
         properties:
           title: Transactions
-          Icon: ShoppingCartOutlined
+          icon: ShoppingCartOutlined
 
 pages:
   - _ref: survey.yaml
@@ -43,7 +51,7 @@ pages:
     actions:
       onEnter:
         - id: get_all_transactions
-          type: fetch()
+          type: Fetch
           params: get_transactions
 
     requests:
@@ -80,16 +88,28 @@ pages:
                 total: 
                   $toDouble: $total
             - $limit: 50
+    
+### 6
+    mutations:
+      - id: send_email
+        type: SendGridMailSend
+        connectionId: sendgrid
+        properties:
+          subject: Customer Survey
+          text:
+            _state: email_message
+          to: 
+            _state: transaction.customer.email
+          bcc: Test <hello@lowdefy.com>
 
     blocks:
       - id: title
         type: Title
         properties:
           content: All Transactions
-
       - id: all_transactions
-        style:
-          --span: 8
+        layout:
+          span: 16
         type: AgGrid
         properties:
           theme: basic
@@ -118,64 +138,96 @@ pages:
         actions:
           onRowClick:
             - id: set_selected
-              type: setState()
+              type: SetState
               params:
                 transaction:
                   _id:
                     _args: row._id
             - id: get_transaction
-              type: fetch()
+              type: Fetch
               params: get_one_transaction
             - id: set_selected
-              type: setState()
+              type: SetState
               params:
                 transaction:
                   _request: get_one_transaction
 
       - id: card_transaction
         type: Card
-        style:
-          --span: 4
+        layout:
+          span: 8
         properties:
           title: Transaction Breakdown
-        blocks:
-          Content:
-            - id: transaction_data
-              type: Markdown
-              properties:
-                content:
-                  _nunjucks: 
-                    template: |
-                      ### Satisfaction Rating: {{customer.satisfaction}}
-                      ### Details
-                      - __Date:__ {{ saleDate | date('DD-MM-YYYY') }}
-                      - __Email:__ {{ customer.email }}
-                      - __Location:__ {{ storeLocation }}
-                      - __Channel:__ {{ purchaseMethod }}
+        area:
+          content:
+            blocks:
+              - id: transaction_data
+                type: Markdown
+                properties:
+                  content:
+                    _nunjucks:
+                      template: |
+                        ### Satisfaction Rating: {{customer.satisfaction}}
+                        ### Details
+                        - __Date:__ {{ saleDate | date('DD-MM-YYYY') }}
+                        - __Email:__ {{ customer.email }}
+                        - __Location:__ {{ storeLocation }}
+                        - __Channel:__ {{ purchaseMethod }}
 
-                      ### Basket
-                      {% for item in items %}
-                      - {{ item.name }}: {{ item.quantity }} @ ${{ item.price.$numberDecimal }} {% endfor %}
-                    on:
-                      _state: transaction
-          Extra:
-            - id: Email
-              type: Button
-              actions:
-                onClick:
-                  - id: open
-                    type: callMethod()
-                    params: 
-                      blockId: modal
-                      method: toggleOpen
-          
-            - id: modal
-              type: Modal
-              properties:
-                title: Send Survey
-                okText: Send
+                        ### Basket
+                        {% for item in items %}
+                        - {{ item.name }}: {{ item.quantity }} @ ${{ item.price.$numberDecimal }} {% endfor %}
+                      on:
+                        _state: transaction
+### 1
+          extra: 
+            blocks:
+              - id: Email
+                type: Button
+                actions:
+                  onClick:
+  ### 4
+                    - id: set_email
+                      type: SetState
+                      params:
+                        email_message:
+                          _nunjucks:
+                            template: |
+                              Hi
 
+                              Please complete our customer survey:
 
+                              https://gvw.lowdefy.dev/survey?_id=%7B%22_oid%22%3A%22{{ _id._oid  }}%22%7D
 
-
-
+                              Kind regards
+                            on:
+                              _state: transaction
+  ### 3
+                    - id: open
+                      type: CallMethod
+                      params:
+                        blockId: modal
+                        method: toggleOpen
+  ### 2
+              - id: modal
+                type: Modal
+                properties:
+                  title: Survey Email
+                  okText: Send
+                blocks:
+                  - id: email_message
+                    type: TextArea
+                    properties:
+                      rows: 8
+                      label:
+                        disable: true
+                actions:
+  ### 5
+                  onOk:
+                    - id: send
+                      type: mutate()
+                      params: send_email
+                    - id: notify_send
+                      type: message()
+                      params: 
+                        content: Email Sent

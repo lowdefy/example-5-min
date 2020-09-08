@@ -1,7 +1,8 @@
 id: box_right
 type: Box
+layout:
+  span: 6
 style:
-  --span: 6
   backgroundColor: '#000'
   borderLeft: '7vw solid #1890ff'
   position: fixed
@@ -9,9 +10,6 @@ style:
   right: 0
   md:
     display: none
-  Content:
-    display: flex
-    overflow: hidden
 blocks:
   - id: box_img
     type: Html
