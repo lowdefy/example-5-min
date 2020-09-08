@@ -1,0 +1,388 @@
+pages:
+  - id: all-users
+    type: PageHeaderMenu
+    layout:
+      contentGutter: [16,0]
+    actions:
+      onInit:
+        - id: set_data
+          type: SetState
+          params:
+            users_table:
+              - id: 0
+                name: Alice Zilch
+                email: alicez@mail.com
+                designation: Project Manager
+                access: 🔐Admin
+                phone: (011) 362 5532
+                image: https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                activity:
+                  - title: Joined
+                    date:
+                      _date: '2019-01-31'
+                  - title: Created Something
+                    date:
+                      _date: '2020-01-31'
+                  - title: Moved around
+                    date:
+                      _date: '2020-03-31'
+                  - title: Access Admin
+                    date:
+                      _date: '2020-08-31'
+                date_added:
+                  _date: '2020-09-01'
+              - id: 1
+                name: Bob Yellow
+                email: boby@mail.com
+                designation: HR Director
+                access: 🔐Admin
+                phone: (011) 362 5536
+                image: https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                activity:
+                  - title: Joined
+                    date:
+                      _date: '2020-02-15'
+                  - title: Access Admin
+                    date:
+                      _date: '2020-04-21'
+                  - title: Shifted around
+                    date:
+                      _date: '2020-06-15'
+                date_added:
+                  _date: '2020-08-15'
+              - id: 2
+                name: Carl Xavier
+                email: carlx@mail.com
+                designation: Business Analyst
+                access: 💻Developer
+                phone: (011) 362 5534
+                image: https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                activity:
+                  - title: Joined
+                    date:
+                      _date: '2020-02-02'
+                  - title: Access Developer
+                    date:
+                      _date: '2020-03-30'
+                  - title: Moved around
+                    date:
+                      _date: '2020-05-31'
+                  - title: Created Something
+                    date:
+                      _date: '2020-08-06'
+                date_added:
+                  _date: '2020-09-04'
+              - id: 3
+                name: Debby Whittle
+                email: debbyw@mail.com
+                designation: Sales
+                access: 🔍View Only
+                phone: (011) 362 5539
+                image: https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                activity:
+                  - title: Joined
+                    date:
+                      _date: '2020-02-02'
+                  - title: Moved around
+                    date:
+                      _date: '2020-03-31'
+                  - title: Access View Only
+                    date:
+                      _date: '2020-05-30'
+                  - title: Created Something
+                    date:
+                      _date: '2020-07-24'
+                date_added:
+                  _date: '2020-09-05'
+              - id: 4
+                name: Eric Vale
+                email: ericv@mail.com
+                designation: CEO
+                access: 🔐Admin
+                phone: (011) 362 5530
+                image: https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                date_added:
+                  _date: '2020-08-10'
+              - id: 5
+                name: Frank Umber
+                email: franku@mail.com
+                designation: Developer
+                access: 💻Developer
+                phone: (011) 362 5538
+                image: https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                date_added:
+                  _date: '2020-09-01'
+
+              - id: 6
+                name: Grace Tremlett
+                email: gracet@mail.com
+                designation: Account Manager
+                access: 🔐Admin
+                phone: (011) 362 5540
+                image: https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                date_added:
+                  _date: '2020-09-01'
+              - id: 7
+                name: Harry Smith
+                email: harrys@mail.com
+                designation: MD
+                access: 🔐Admin
+                phone: (011) 362 5541
+                image: https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                date_added:
+                  _date: '2020-08-15'
+              - id: 8
+                name: Ian Roy
+                email: ianr@mail.com
+                designation: Designer
+                access: 🔍View Only
+                phone: (011) 362 5542
+                image: https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                date_added:
+                  _date: '2020-09-04'
+              - id: 9
+                name: Jenna Quincy
+                email: jennaq@mail.com
+                designation: Office Manager
+                access: 🔐Admin
+                phone: (011) 362 5539
+                image: https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                date_added:
+                  _date: '2020-09-05'
+              - id: 10
+                name: Karl Powell
+                email: karlp@mail.com
+                designation: IT Manager
+                access: 💻Developer
+                phone: (011) 362 5529
+                image: https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                date_added:
+                  _date: '2020-08-10'
+              - id: 11
+                name: Louis Otto
+                email: louiso@mail.com
+                designation: Intern
+                access: 🔍View Only
+                phone: (011) 362 5545
+                image: https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
+                date_added:
+                  _date: '2020-09-06'
+        - id: set_user
+          type: SetState
+          params:
+            user:
+              _get:
+                key: '0'
+                from:
+                  _state: users_table
+    blocks:
+      - id: title
+        type: Title
+        properties:
+          content: All Users
+          level: 3
+      - id: all_users
+        type: Box
+        layout:
+          span: 14
+        blocks:
+          - id: all_users_table
+            type: AgGrid
+            properties:
+              height: 600
+              theme: basic
+              rowData:
+                _state: users_table
+              columnDefs:
+                - headerName: Name
+                  field: name
+                  width: 140
+                - headerName: Email
+                  field: email
+                  width: 160
+                - headerName: Phone
+                  field: phone
+                  width: 160
+                - headerName: Designation
+                  field: designation
+                  width: 160
+                - headerName: Access
+                  field: access
+                  width: 140
+              defaultColDef:
+                filter: true
+                resizable: true
+                sortable: true
+            actions:
+              onRowClick:
+                - id: set_selected
+                  type: SetState
+                  params:
+                    user:
+                      _args: row
+
+      - id: user
+        type: Box
+        layout:
+          span: 10
+          contentGutter: [0,16]
+        blocks:
+          - id: user_info
+            type: Card
+            properties:
+              title: User Info
+            areas:
+              content:
+                blocks:
+                  - id: user_photo
+                    type: Html
+                    layout:
+                      grow: 1
+                    properties:
+                      html:
+                        _nunjucks:
+                          template: |
+                            <img style="width: 100px; border-radius: 20px;" src={{ image }}" alt="User"/>
+                          on:
+                            image:
+                              _state: user.image
+                  - id: user_data
+                    type: Markdown
+                    layout:
+                      grow: 2
+                    properties:
+                      renderHtml: true
+                      content:
+                        _nunjucks:
+                          template: |
+                            ### {{ name }}
+                            _{{ designation }}_<br/>
+                            {{ email }} | {{ phone }}<br/>
+                            __Access Level:__ {{ access }}<br/>
+                            __Date Added:__ {{ date_added | date('DD/MM/YYYY') }}<br/>
+                          on:
+                            _state: user
+              extra: 
+                blocks:
+                  - id: edit
+                    type: Button
+                    properties:
+                      title: Edit
+                    actions:
+                      onClick:
+                        - id: open
+                          type: CallMethod
+                          params:
+                            blockId: edit_drawer
+                            method: toggleOpen
+                  - id: edit_drawer
+                    type: Drawer
+                    layout:
+                      contentGutter: 16
+                    properties:
+                      title: Edit User
+                      width: 512
+                    blocks:
+                      - id: user.name
+                        type: TextInput
+                        properties:
+                          title: Name
+                      - id: user.email
+                        type: TextInput
+                        properties:
+                          title: Email
+                      - id: user.phone
+                        type: TextInput
+                        properties:
+                          title: Phone
+                      - id: user.designation
+                        type: TextInput
+                        properties:
+                          title: Designation
+                      - id: user.access
+                        type: Selector
+                        properties:
+                          title: Access Level
+                          options:
+                            - 🔐Admin
+                            - 💻Developer
+                            - 🔍View Only
+                      - id: save_button
+                        type: Button
+                        properties:
+                          title: Save
+                          icon: SaveOutlined
+                          block: true
+                        actions:
+                          onClick:
+                            - id: update_users
+                              type: SetState
+                              params:
+                                users_table:
+                                  _mql_aggregate:
+                                    on:
+                                      _state: users_table
+                                    pipeline:
+                                      - $addFields:
+                                          name:
+                                            $cond:
+                                              - $eq:
+                                                  - $id
+                                                  - _state: user.id
+                                              - _state: user.name
+                                              - $name
+                                          email:
+                                            $cond:
+                                              - $eq:
+                                                  - $id
+                                                  - _state: user.id
+                                              - _state: user.email
+                                              - $email
+                                          phone:
+                                            $cond:
+                                              - $eq:
+                                                  - $id
+                                                  - _state: user.id
+                                              - _state: user.phone
+                                              - $phone
+                                          designation:
+                                            $cond:
+                                              - $eq:
+                                                  - $id
+                                                  - _state: user.id
+                                              - _state: user.designation
+                                              - $designation
+                                          access:
+                                            $cond:
+                                              - $eq:
+                                                  - $id
+                                                  - _state: user.id
+                                              - _state: user.access
+                                              - $access
+                            - id: close_drawer
+                              type: CallMethod
+                              params:
+                                blockId: edit_drawer
+                                method: setOpen
+                                args:
+                                  open: false
+          - id: user_activity
+            type: Card
+            properties:
+              title: User Activity
+            blocks:
+              - id: user.activity
+                type: Timeline
+                visible:
+                  _mql_test:
+                    user.activity:
+                      $exists: true
+                blocks:
+                  - id: user.activity.$.entry
+                    type: Paragraph
+                    properties:
+                      content:
+                        _nunjucks:
+                          template: "{{ date | date('DD/MM/YYYY') }} - {{ title }}"
+                          on: 
+                            _state: user.activity.$
