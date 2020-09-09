@@ -8,12 +8,20 @@ connections:
       collection: sales
       read: true
       write: true
-
+  - id: aggregation_runner
+    type: MongoDBCollection
+    properties:
+      databaseUri:
+        _secret: lowdefy_examples_mdb
+      databaseName: sample_supplies
+      collection: sales
+      read: true
+      write: true
 ### 7
   - id: sendgrid
     type: SendGridMail
     properties:
-      apiKey: 
+      apiKey:
         _secret: lowdefy_sendgrid
       from: followup@mail.lowdefy.com
 
@@ -45,7 +53,7 @@ menus:
 pages:
   - _ref: survey.yaml
   - _ref: dashboard.yaml
-
+  - _ref: aggregation-runner.yaml
   - id: all-transactions
     type: PageHeaderMenu
     actions:
@@ -70,25 +78,25 @@ pages:
             - $unwind: $items
             - $group:
                 _id: $_id
-                total: 
+                total:
                   $sum: $items.price
-                saleDate: 
+                saleDate:
                   $first: $saleDate
-                numItems: 
+                numItems:
                   $sum: $items.quantity
-                storeLocation: 
+                storeLocation:
                   $first: $storeLocation
-                customer: 
+                customer:
                   $first: $customer
-                couponUsed: 
+                couponUsed:
                   $first: $couponUsed
-                purchaseMethod: 
+                purchaseMethod:
                   $first: $purchaseMethod
-            - $addFields: 
-                total: 
+            - $addFields:
+                total:
                   $toDouble: $total
             - $limit: 50
-    
+
 ### 6
     mutations:
       - id: send_email
@@ -98,7 +106,7 @@ pages:
           subject: Customer Survey
           text:
             _state: email_message
-          to: 
+          to:
             _state: transaction.customer.email
           bcc: Test <hello@lowdefy.com>
 
@@ -180,7 +188,7 @@ pages:
                       on:
                         _state: transaction
 ### 1
-          extra: 
+          extra:
             blocks:
               - id: Email
                 type: Button
@@ -229,5 +237,5 @@ pages:
                       params: send_email
                     - id: notify_send
                       type: message()
-                      params: 
+                      params:
                         content: Email Sent
