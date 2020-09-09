@@ -3,8 +3,8 @@ connections:
     type: MongoDBCollection
     properties:
       databaseUri:
-        _secret: mongodb_company
-      databaseName: company
+        _secret: lowdefy_examples_mdb
+      databaseName: sample_supplies
       collection: sales
       read: true
       write: true

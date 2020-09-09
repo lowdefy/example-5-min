@@ -1,5 +1,5 @@
 id: dashboard
-type: PageSiderMenu
+type: PageHeaderMenu
 properties:
   title: dashboard
 
@@ -103,111 +103,156 @@ requests:
         - $addFields:
             month: $_id
             revenue:
-              $toDouble: $revenue
+              $add:
+                - $toDouble: $revenue
+                - $multiply:
+                    - $add:
+                        - $multiply:
+                            - $subtract:
+                              - $year: $_id
+                              - 2013
+                            - 12
+                        - $month: $_id
+                    - 1300
+
         - $project:
             _id: 0
         - $sort:
             month: 1
-            
+
+layout:
+  contentGutter: 16
 blocks:
-  - id: bx
+  - id: box_top_left
     type: Box
     layout:
       span: 16
+      contentGutter: 16
     blocks:
-      - id: title
-        type: Markdown
-        properties:
-          content: |
-            #### Sales Overview
-      - id: card_total
-        type: Card
+      - id: box_overview
+        type: Box
+        layout:
+          span: 12
+          contentGutter: 8
         blocks:
-          - id: total_sales
-            type: Statistic
-            layout:
-              span: 8
+          - id: title_overview
+            type: Markdown
             properties:
-              title: Month's Revenue
-              value: 175697
-              prefix: "$"
-          - id: this_week
-            type: Statistic
+              content: |
+                #### Overview
+          - id: card_total
+            type: Card
             layout:
-              span: 8
-            properties:
-              title: Month on Month Avg
-              value: 14
-              iconPrefix: FallOutlined
-              suffix: "%"
-          - id: this_ratio
-            type: Statistic
-            layout:
-              span: 8
-            properties:
-              title: Current Sell Out Ratio
-              value: 0.43
-              iconPrefix: 
-                name: WarningTwoTone
-                twoToneColor: '#f5222d'
-          - id: this_leads
-            type: Statistic
-            layout:
-              span: 8
-            properties:
-              title: New Leads This Month
-              value: 102
-              iconPrefix: ArrowDownOutlined
-          - id: this_store
-            type: Statistic
-            layout:
-              span: 8
-            properties:
-              title: Top Store (This Month)
-              value: Denver
-              iconPrefix: ShopOutlined
-          - id: this_category
-            type: Statistic
-            layout:
-              span: 8
-            properties:
-              title: Top Product (This Month)
-              value: Notepad
-              iconPrefix: ShoppingCartOutlined
-      
-      - id: progress_title
-        type: Markdown
-        properties:
-          content: |
-            ##### Monthly Sale Target
-      - id: card_target
-        type: Card
+              contentGutter: 8
+            blocks:
+              - id: total_sales
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Revenue
+                  value: 253697
+                  prefix: "$"
+              - id: this_week
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Growth
+                  value: 14
+                  iconPrefix: FallOutlined
+                  suffix: "%"
+              - id: this_ratio
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Sell Out Ratio
+                  value: 0.43
+                  iconPrefix:
+                    name: WarningTwoTone
+                    twoToneColor: '#f5222d'
+              - id: this_leads
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: New Leads
+                  value: 102
+                  iconPrefix: ArrowDownOutlined
+              - id: this_store
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Top Store
+                  value: Denver
+                  iconPrefix: ShopOutlined
+              - id: this_category
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Top Product
+                  value: Notepad
+                  iconPrefix: ShoppingCartOutlined
+      - id: box_progress
+        type: Box
+        layout:
+          span: 12
+          contentGutter: 8
         blocks:
-          - id: progress_1
-            type: Progress
+          - id: progress_title
+            type: Markdown
             properties:
-              percent: 74
-              showInfo: true
-              strokeWidth: 15
-          - id: progress_2
-            type: Progress
-            properties:
-              percent: 48
-              showInfo: true
-              strokeWidth: 15
-              strokeColor: '#ff7875'
-          - id: progress_3
-            type: Progress
-            properties:
-              percent: 63
-              showInfo: true
-              strokeWidth: 15
-              strokeColor: '#95de64'
+              content: "#### Targets"
+          - id: card_target
+            type: Card
+            blocks:
+              - id: progress_1_title
+                type: Markdown
+                style:
+                  marginTop: 8
+                properties:
+                  content: "##### Leads"
+              - id: progress_1
+                type: Progress
+                properties:
+                  percent: 74
+                  showInfo: true
+                  strokeWidth: 15
+              - id: progress_2_title
+                type: Markdown
+                style:
+                  marginTop: 8
+                properties:
+                  content: "##### Deals Closed"
+              - id: progress_2
+                type: Progress
+                properties:
+                  percent: 48
+                  showInfo: true
+                  strokeWidth: 15
+                  strokeColor: '#ff7875'
+              - id: progress_3_title
+                type: Markdown
+                style:
+                  marginTop: 8
+                properties:
+                  content: "##### Sales"
+              - id: progress_3
+                type: Progress
+                properties:
+                  percent: 63
+                  showInfo: true
+                  strokeWidth: 15
+                  strokeColor: '#95de64'
 
-  - id: bx_product
+  - id: box_product
     type: Box
     layout:
       span: 8
+      contentGutter: 8
     blocks:
       - id: title_product_pie
         type: Markdown
@@ -221,10 +266,9 @@ blocks:
         blocks:
           - id: chart_product_pie
             type: AmCharts4Pie
-            style:
-              height: 340
             properties:
               innerRadius: 30%
+              height: 340
               data:
                 _request: get_product_sales
               series:
@@ -242,7 +286,7 @@ blocks:
                       - '#ff85c0'
 
 
-                  ticks: 
+                  ticks:
                     disabled: true
                   labels:
                     hideOversized: true
@@ -263,8 +307,9 @@ blocks:
                     category: name
   - id: bx_revenue
     type: Box
-    layout: 
+    layout:
       span: 12
+      contentGutter: 8
     blocks:
       - id: title_sales_by_month
         type: Markdown
@@ -276,11 +321,10 @@ blocks:
         blocks:
           - id: sales_by_month
             type: AmCharts4XY
-            style:
-              height: 300
             properties:
               data:
                 _request: get_sales_by_month
+              height: 300
               xAxes:
                 - type: DateAxis
                   title:
@@ -317,11 +361,11 @@ blocks:
                         hover:
                           properties:
                             scale: 1.2
-
   - id: bx_store
     type: Box
-    layout: 
+    layout:
       span: 12
+      contentGutter: 8
     blocks:
       - id: title_store_by_month
         type: Markdown
@@ -333,11 +377,10 @@ blocks:
         blocks:
           - id: feedback_by_month
             type: AmCharts4XY
-            style:
-              height: 300
             properties:
               data:
                 _request: get_store_sales
+              height: 300
               xAxes:
                 - type: CategoryAxis
                   dataFields:
@@ -351,7 +394,7 @@ blocks:
                   min: 0
                   title:
                     text: Revenue
-                  
+
               series:
                 - type: ColumnSeries
                   name: Revenue
@@ -366,4 +409,3 @@ blocks:
                     tooltipText: "{valueY}"
                     fill: '#ff7875'
                     stroke: '#ff7875'
-              
