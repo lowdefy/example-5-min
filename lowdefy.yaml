@@ -53,6 +53,7 @@ menus:
 pages:
   - _ref: survey.yaml
   - _ref: dashboard.yaml
+  - _ref: quick_examples/quote-estimate.yaml
   - _ref: aggregation-runner.yaml
   - id: all-transactions
     type: PageHeaderMenu

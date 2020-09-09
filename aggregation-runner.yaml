@@ -59,7 +59,7 @@ requests:
     properties:
       pipeline:
         _load_yaml:
-          _state: in
+          _state: input
 
 properties:
   header:
@@ -80,13 +80,13 @@ areas:
               type: Fetch
               params: aggregation
 blocks:
-  - id: in
+  - id: input
     type: CodeEditor
     layout:
       span: 12
     properties:
       height: 600
-  - id: out
+  - id: output
     type: CodeEditor
     layout:
       span: 12
