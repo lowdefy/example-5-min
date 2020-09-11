@@ -107,8 +107,8 @@ requests:
                     - $add:
                         - $multiply:
                             - $subtract:
-                              - $year: $_id.month
-                              - 2013
+                                - $year: $_id.month
+                                - 2013
                             - 12
                         - $month: $_id.month
                     - 1300
@@ -182,7 +182,7 @@ blocks:
                   value: 0.43
                   prefixIcon:
                     name: WarningTwoTone
-                    twoToneColor: '#E8684A'
+                    twoToneColor: "#E8684A"
               - id: this_leads
                 type: Statistic
                 layout:
@@ -225,40 +225,40 @@ blocks:
                 style:
                   marginTop: 8
                 properties:
-                  content: "##### Leads"
+                  content: "##### Contacts converted to leads"
               - id: progress_1
                 type: Progress
                 properties:
                   percent: 86
                   showInfo: true
                   strokeWidth: 15
-                  strokeColor: '#5AD8A6'
+                  strokeColor: "#5AD8A6"
               - id: progress_2_title
                 type: Markdown
                 style:
                   marginTop: 8
                 properties:
-                  content: "##### Deals Closed"
+                  content: "##### Closed deals on new leads"
               - id: progress_2
                 type: Progress
                 properties:
                   percent: 48
                   showInfo: true
                   strokeWidth: 15
-                  strokeColor: '#E8684A'
+                  strokeColor: "#E8684A"
               - id: progress_3_title
                 type: Markdown
                 style:
                   marginTop: 8
                 properties:
-                  content: "##### Sales"
+                  content: "##### Upsell existing customers"
               - id: progress_3
                 type: Progress
                 properties:
                   percent: 63
                   showInfo: true
                   strokeWidth: 15
-                  strokeColor: '#5D7092'
+                  strokeColor: "#5D7092"
 
       - id: bx_revenue
         type: Box
@@ -303,8 +303,8 @@ blocks:
                   series:
                     - type: LineSeries
                       name: Austin
-                      stroke: '#5B8FF9'
-                      fill: '#5B8FF9'
+                      stroke: "#5B8FF9"
+                      fill: "#5B8FF9"
                       fillOpacity: 1
                       stacked: true
                       legendSettings:
@@ -314,8 +314,8 @@ blocks:
                         valueY: Austin
                     - type: LineSeries
                       name: Denver
-                      stroke: '#5AD8A6'
-                      fill: '#5AD8A6'
+                      stroke: "#5AD8A6"
+                      fill: "#5AD8A6"
                       fillOpacity: 1
                       stacked: true
                       legendSettings:
@@ -325,8 +325,8 @@ blocks:
                         valueY: Denver
                     - type: LineSeries
                       name: London
-                      stroke: '#5D7092'
-                      fill: '#5D7092'
+                      stroke: "#5D7092"
+                      fill: "#5D7092"
                       fillOpacity: 1
                       stacked: true
                       legendSettings:
@@ -336,8 +336,8 @@ blocks:
                         valueY: London
                     - type: LineSeries
                       name: New York
-                      stroke: '#F6BD16'
-                      fill: '#F6BD16'
+                      stroke: "#F6BD16"
+                      fill: "#F6BD16"
                       fillOpacity: 1
                       stacked: true
                       legendSettings:
@@ -347,8 +347,8 @@ blocks:
                         valueY: New York
                     - type: LineSeries
                       name: San Diego
-                      stroke: '#E8684A'
-                      fill: '#E8684A'
+                      stroke: "#E8684A"
+                      fill: "#E8684A"
                       fillOpacity: 1
                       stacked: true
                       legendSettings:
@@ -358,8 +358,8 @@ blocks:
                         valueY: San Diego
                     - type: LineSeries
                       name: Seattle
-                      stroke: '#6DC8EC'
-                      fill: '#6DC8EC'
+                      stroke: "#6DC8EC"
+                      fill: "#6DC8EC"
                       fillOpacity: 1
                       stacked: true
                       legendSettings:
@@ -396,19 +396,19 @@ blocks:
                   alignLabels: false
                   colors:
                     list:
-                      - '#5B8FF9'
-                      - '#5AD8A6'
-                      - '#5D7092'
-                      - '#F6BD16'
-                      - '#E8684A'
-                      - '#6DC8EC'
-                      - '#9270CA'
-                      - '#FF9D4D'
+                      - "#5B8FF9"
+                      - "#5AD8A6"
+                      - "#5D7092"
+                      - "#F6BD16"
+                      - "#E8684A"
+                      - "#6DC8EC"
+                      - "#9270CA"
+                      - "#FF9D4D"
                   ticks:
                     disabled: true
                   labels:
                     hideOversized: true
-                    text: '{category}'
+                    text: "{category}"
                     bent: true
                     radius: 3
                     paddingTop: 0
@@ -417,12 +417,32 @@ blocks:
                     paddingRight: 0
                     fontSize: 14
                   slices:
-                    stroke: '#fff'
+                    stroke: "#fff"
                     strokeWidth: 2
                     strokeOpacity: 1
                   dataFields:
                     value: count
                     category: name
+      - id: title_objectives
+        type: Markdown
+        properties:
+          content: |
+            #### Current Quater's Objectives
+      - id: card_objectives
+        type: Card
+        layout:
+          justify: center
+        blocks:
+          - id: objectives
+            type: Markdown
+            properties:
+              content: |
+                - Keep new leads score above 80
+                - Maintain a sell out ratio above 0.8
+                - Achive $300k in revenue
+                - Close 30% of deals
+                - Convert 75% of contacts to leads
+                - Upsell 70% of existing customers
 
   # - id: bx_store
   #   type: Box

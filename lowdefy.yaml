@@ -17,13 +17,7 @@ connections:
       collection: sales
       read: true
       write: true
-### 7
-  - id: sendgrid
-    type: SendGridMail
-    properties:
-      apiKey:
-        _secret: lowdefy_sendgrid
-      from: followup@mail.lowdefy.com
+### Add sendgrid connection
 
 global:
   currency_format:
@@ -53,15 +47,17 @@ menus:
 pages:
   - _ref: survey.yaml
   - _ref: dashboard.yaml
-  - _ref: quick_examples/quote-estimate.yaml
-  - _ref: aggregation-runner.yaml
   - id: all-transactions
     type: PageHeaderMenu
+    layout:
+      contentGutter: 15
     actions:
       onEnter:
         - id: get_all_transactions
           type: Fetch
           params: get_transactions
+
+    ### Add mutation
 
     requests:
       - id: get_one_transaction
@@ -97,19 +93,6 @@ pages:
                 total:
                   $toDouble: $total
             - $limit: 50
-
-### 6
-    mutations:
-      - id: send_email
-        type: SendGridMailSend
-        connectionId: sendgrid
-        properties:
-          subject: Customer Survey
-          text:
-            _state: email_message
-          to:
-            _state: transaction.customer.email
-          bcc: Test <hello@lowdefy.com>
 
     blocks:
       - id: title
@@ -163,11 +146,15 @@ pages:
 
       - id: card_transaction
         type: Card
+        visible:
+          _not:
+            _not:
+              _state: transaction.customer.email
         layout:
           span: 8
         properties:
           title: Transaction Breakdown
-        area:
+        areas:
           content:
             blocks:
               - id: transaction_data
@@ -176,7 +163,7 @@ pages:
                   content:
                     _nunjucks:
                       template: |
-                        ### Satisfaction Rating: {{customer.satisfaction}}
+                        ### Satisfaction Rating: {{ customer.satisfaction }}
                         ### Details
                         - __Date:__ {{ saleDate | date('DD-MM-YYYY') }}
                         - __Email:__ {{ customer.email }}
@@ -188,55 +175,3 @@ pages:
                         - {{ item.name }}: {{ item.quantity }} @ ${{ item.price.$numberDecimal }} {% endfor %}
                       on:
                         _state: transaction
-### 1
-          extra:
-            blocks:
-              - id: Email
-                type: Button
-                actions:
-                  onClick:
-  ### 4
-                    - id: set_email
-                      type: SetState
-                      params:
-                        email_message:
-                          _nunjucks:
-                            template: |
-                              Hi
-
-                              Please complete our customer survey:
-
-                              https://gvw.lowdefy.dev/survey?_id=%7B%22_oid%22%3A%22{{ _id._oid  }}%22%7D
-
-                              Kind regards
-                            on:
-                              _state: transaction
-  ### 3
-                    - id: open
-                      type: CallMethod
-                      params:
-                        blockId: modal
-                        method: toggleOpen
-  ### 2
-              - id: modal
-                type: Modal
-                properties:
-                  title: Survey Email
-                  okText: Send
-                blocks:
-                  - id: email_message
-                    type: TextArea
-                    properties:
-                      rows: 8
-                      label:
-                        disable: true
-                actions:
-  ### 5
-                  onOk:
-                    - id: send
-                      type: mutate()
-                      params: send_email
-                    - id: notify_send
-                      type: message()
-                      params:
-                        content: Email Sent
