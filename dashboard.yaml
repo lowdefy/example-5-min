@@ -2,7 +2,6 @@ id: dashboard
 type: PageHeaderMenu
 properties:
   title: Dashboard
-
 requests:
   - id: get_product_sales
     type: MongoDBAggregation
@@ -27,49 +26,6 @@ requests:
             _id: 0
         - $sort:
             count: -1
-  # - id: get_store_sales
-  #   type: MongoDBAggregation
-  #   connectionId: transactions
-  #   properties:
-  #     pipeline:
-  #       - $match:
-  #           $expr:
-  #             $eq:
-  #               - $dateFromParts:
-  #                   year:
-  #                     $year: $saleDate
-  #                   month:
-  #                     $month: $saleDate
-  #               - $dateFromParts:
-  #                   year: 2017
-  #                   month: 12
-  #       - $addFields:
-  #           total:
-  #             $reduce:
-  #               input: $items
-  #               initialValue: 0
-  #               in:
-  #                 $add:
-  #                   - $$value
-  #                   - $multiply:
-  #                       - $$this.price
-  #                       - $$this.quantity
-  #       - $group:
-  #           _id: $storeLocation
-  #           count:
-  #             $sum: 1
-  #           revenue:
-  #             $sum: $total
-  #           satisfaction:
-  #             $avg: $customer.satisfaction
-  #       - $addFields:
-  #           storeLocation: $_id
-  #           revenue:
-  #             $toDouble: $revenue
-  #       - $project:
-  #           _id: 0
-  #       - $sort:
-  #           revenue: 1
 
   - id: get_sales_by_month
     type: MongoDBAggregation
@@ -111,7 +67,7 @@ requests:
                               - 2013
                             - 12
                         - $month: $_id.month
-                    - 1300
+                    - 900
         - $group:
             _id: $_id.month
             revenue:
@@ -278,7 +234,7 @@ blocks:
                 properties:
                   data:
                     _request: get_sales_by_month
-                  height: 360
+                  height: 340
                   xAxes:
                     - type: DateAxis
                       id: month
@@ -368,7 +324,7 @@ blocks:
                         dateX: month
                         valueY: Seattle
 
-  - id: box_product
+  - id: box_right
     type: Box
     layout:
       span: 8
@@ -423,6 +379,24 @@ blocks:
                   dataFields:
                     value: count
                     category: name
+      - id: title_text
+        type: Markdown
+        properties:
+          content: |
+            #### Lowdefy
+      - id: card_text
+        type: Card
+        blocks:
+          - id: text
+            type: Markdown
+            style:
+              '.markdown-body':
+                fontSize: 12px
+            properties:
+              content: |
+                Lowdefy was designed to solve the need for businesses to manage their internal data. Businesses need internal tools to connect to a variety of data sources. They need to be able to take actions on that data, and be able to have a view on what is happening in their business.
+
+                Lowdefy allows you to connect to data sources and build internal tools and dashboards. These tools are easy to build and change. This means you get real value quickly, and the tools can grow and change with your business.
 
   # - id: bx_store
   #   type: Box
