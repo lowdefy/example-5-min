@@ -9,11 +9,12 @@ connections:
       read: true
       write: true
 
-### 7
+  ### Add sendgrid connection
+  ### 7
   - id: sendgrid
     type: SendGridMail
     properties:
-      apiKey: 
+      apiKey:
         _secret: lowdefy_sendgrid
       from: followup@mail.lowdefy.com
 
@@ -51,7 +52,7 @@ pages:
     actions:
       onEnter:
         - id: get_all_transactions
-          type: fetch()
+          type: Fetch
           params: get_transactions
 
     requests:
@@ -70,26 +71,27 @@ pages:
             - $unwind: $items
             - $group:
                 _id: $_id
-                total: 
+                total:
                   $sum: $items.price
-                saleDate: 
+                saleDate:
                   $first: $saleDate
-                numItems: 
+                numItems:
                   $sum: $items.quantity
-                storeLocation: 
+                storeLocation:
                   $first: $storeLocation
-                customer: 
+                customer:
                   $first: $customer
-                couponUsed: 
+                couponUsed:
                   $first: $couponUsed
-                purchaseMethod: 
+                purchaseMethod:
                   $first: $purchaseMethod
-            - $addFields: 
-                total: 
+            - $addFields:
+                total:
                   $toDouble: $total
             - $limit: 50
-    
-### 6
+
+    ### Add mutation
+    ### 6
     mutations:
       - id: send_email
         type: SendGridMailSend
@@ -98,7 +100,7 @@ pages:
           subject: Customer Survey
           text:
             _state: email_message
-          to: 
+          to:
             _state: transaction.customer.email
           bcc: Test <hello@lowdefy.com>
 
@@ -179,14 +181,14 @@ pages:
                         - {{ item.name }}: {{ item.quantity }} @ ${{ item.price.$numberDecimal }} {% endfor %}
                       on:
                         _state: transaction
-### 1
-          extra: 
+          ### 1
+          extra:
             blocks:
               - id: Email
                 type: Button
                 actions:
                   onClick:
-  ### 4
+                    ### 4
                     - id: set_email
                       type: SetState
                       params:
@@ -202,13 +204,13 @@ pages:
                               Kind regards
                             on:
                               _state: transaction
-  ### 3
+                    ### 3
                     - id: open
                       type: CallMethod
                       params:
                         blockId: modal
                         method: toggleOpen
-  ### 2
+              ### 2
               - id: modal
                 type: Modal
                 properties:
@@ -218,16 +220,16 @@ pages:
                   - id: email_message
                     type: TextArea
                     properties:
-                      rows: 8
+                      rows: 12
                       label:
-                        disable: true
+                        disabled: true
                 actions:
-  ### 5
+                  ### 5
                   onOk:
                     - id: send
-                      type: mutate()
+                      type: Mutate
                       params: send_email
                     - id: notify_send
-                      type: message()
-                      params: 
+                      type: Message
+                      params:
                         content: Email Sent
