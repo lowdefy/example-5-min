@@ -1,0 +1,99 @@
+id: aggregation-runner
+type: PageHeaderMenu
+layout:
+  contentGutter: 16
+actions:
+  onInit:
+    - id: init
+      type: SetState
+      params:
+        in: |
+          - $addFields:
+              total:
+                $reduce:
+                  input: $items
+                  initialValue: 0
+                  in:
+                    $add:
+                      - $$value
+                      - $multiply:
+                          - $$this.price
+                          - $$this.quantity
+          - $group:
+              _id:
+                $dateFromParts:
+                  year:
+                    $year: $saleDate
+                  month:
+                    $month: $saleDate
+              count:
+                $sum: 1
+              revenue:
+                $sum: $total
+              satisfaction:
+                $avg: $customer.satisfaction
+          - $addFields:
+              month: $_id
+              revenue:
+                $add:
+                  - $toDouble: $revenue
+                  - $multiply:
+                      - $add:
+                          - $multiply:
+                              - $subtract:
+                                - $year: $_id
+                                - 2013
+                              - 12
+                          - $month: $_id
+                      - 1300
+
+          - $project:
+              _id: 0
+          - $sort:
+              month: 1
+
+requests:
+  - id: aggregation
+    type: MongoDBAggregation
+    connectionId: aggregation_runner
+    properties:
+      pipeline:
+        _load_yaml:
+          _state: input
+
+properties:
+  header:
+    theme: light
+  menu:
+    links: []
+areas:
+  header:
+    blocks:
+      - id: Run
+        type: Button
+        properties:
+          size: large
+          icon: PlayCircleOutlined
+        actions:
+          onClick:
+            - id: fetch
+              type: Fetch
+              params: aggregation
+blocks:
+  - id: input
+    type: CodeEditor
+    layout:
+      span: 12
+    properties:
+      height: 600
+  - id: output
+    type: CodeEditor
+    layout:
+      span: 12
+    properties:
+      height: 600
+      options:
+        readOnly: true
+      value:
+        _dump_yaml:
+          _request: aggregation

@@ -1,7 +1,7 @@
 id: dashboard
-type: PageSiderMenu
+type: PageHeaderMenu
 properties:
-  title: dashboard
+  title: Dashboard
 
 requests:
   - id: get_product_sales
@@ -27,49 +27,49 @@ requests:
             _id: 0
         - $sort:
             count: -1
-  - id: get_store_sales
-    type: MongoDBAggregation
-    connectionId: transactions
-    properties:
-      pipeline:
-        - $match:
-            $expr:
-              $eq:
-                - $dateFromParts:
-                    year:
-                      $year: $saleDate
-                    month:
-                      $month: $saleDate
-                - $dateFromParts:
-                    year: 2017
-                    month: 12
-        - $addFields:
-            total:
-              $reduce:
-                input: $items
-                initialValue: 0
-                in:
-                  $add:
-                    - $$value
-                    - $multiply:
-                        - $$this.price
-                        - $$this.quantity
-        - $group:
-            _id: $storeLocation
-            count:
-              $sum: 1
-            revenue:
-              $sum: $total
-            satisfaction:
-              $avg: $customer.satisfaction
-        - $addFields:
-            storeLocation: $_id
-            revenue:
-              $toDouble: $revenue
-        - $project:
-            _id: 0
-        - $sort:
-            revenue: 1
+  # - id: get_store_sales
+  #   type: MongoDBAggregation
+  #   connectionId: transactions
+  #   properties:
+  #     pipeline:
+  #       - $match:
+  #           $expr:
+  #             $eq:
+  #               - $dateFromParts:
+  #                   year:
+  #                     $year: $saleDate
+  #                   month:
+  #                     $month: $saleDate
+  #               - $dateFromParts:
+  #                   year: 2017
+  #                   month: 12
+  #       - $addFields:
+  #           total:
+  #             $reduce:
+  #               input: $items
+  #               initialValue: 0
+  #               in:
+  #                 $add:
+  #                   - $$value
+  #                   - $multiply:
+  #                       - $$this.price
+  #                       - $$this.quantity
+  #       - $group:
+  #           _id: $storeLocation
+  #           count:
+  #             $sum: 1
+  #           revenue:
+  #             $sum: $total
+  #           satisfaction:
+  #             $avg: $customer.satisfaction
+  #       - $addFields:
+  #           storeLocation: $_id
+  #           revenue:
+  #             $toDouble: $revenue
+  #       - $project:
+  #           _id: 0
+  #       - $sort:
+  #           revenue: 1
 
   - id: get_sales_by_month
     type: MongoDBAggregation
@@ -89,125 +89,290 @@ requests:
                         - $$this.quantity
         - $group:
             _id:
-              $dateFromParts:
-                year:
-                  $year: $saleDate
-                month:
-                  $month: $saleDate
-            count:
-              $sum: 1
+              month:
+                $dateFromParts:
+                  year:
+                    $year: $saleDate
+                  month:
+                    $month: $saleDate
+              store: $storeLocation
             revenue:
               $sum: $total
-            satisfaction:
-              $avg: $customer.satisfaction
         - $addFields:
-            month: $_id
+            # Add a positive trend to the revenue
             revenue:
-              $toDouble: $revenue
+              $add:
+                - $toDouble: $revenue
+                - $multiply:
+                    - $add:
+                        - $multiply:
+                            - $subtract:
+                              - $year: $_id.month
+                              - 2013
+                            - 12
+                        - $month: $_id.month
+                    - 1300
+        - $group:
+            _id: $_id.month
+            revenue:
+              $sum: $revenue
+            stores:
+              $push:
+                k: $_id.store
+                v: $revenue
         - $project:
-            _id: 0
+            root:
+              $mergeObjects:
+                - revenue: $revenue
+                  month: $_id
+                - $arrayToObject: $stores
+        - $replaceRoot:
+            newRoot: $root
         - $sort:
             month: 1
-            
+
+layout:
+  contentGutter: 16
 blocks:
-  - id: bx
+  - id: box_top_left
     type: Box
     layout:
       span: 16
+      contentGutter: 16
     blocks:
-      - id: title
-        type: Markdown
-        properties:
-          content: |
-            #### Sales Overview
-      - id: card_total
-        type: Card
+      - id: box_overview
+        type: Box
+        layout:
+          span: 12
+          contentGutter: 8
         blocks:
-          - id: total_sales
-            type: Statistic
-            layout:
-              span: 8
+          - id: title_overview
+            type: Markdown
             properties:
-              title: Month's Revenue
-              value: 175697
-              prefix: "$"
-          - id: this_week
-            type: Statistic
+              content: |
+                #### Overview
+          - id: card_total
+            type: Card
             layout:
-              span: 8
-            properties:
-              title: Month on Month Avg
-              value: 14
-              iconPrefix: FallOutlined
-              suffix: "%"
-          - id: this_ratio
-            type: Statistic
-            layout:
-              span: 8
-            properties:
-              title: Current Sell Out Ratio
-              value: 0.43
-              iconPrefix: 
-                name: WarningTwoTone
-                twoToneColor: '#f5222d'
-          - id: this_leads
-            type: Statistic
-            layout:
-              span: 8
-            properties:
-              title: New Leads This Month
-              value: 102
-              iconPrefix: ArrowDownOutlined
-          - id: this_store
-            type: Statistic
-            layout:
-              span: 8
-            properties:
-              title: Top Store (This Month)
-              value: Denver
-              iconPrefix: ShopOutlined
-          - id: this_category
-            type: Statistic
-            layout:
-              span: 8
-            properties:
-              title: Top Product (This Month)
-              value: Notepad
-              iconPrefix: ShoppingCartOutlined
-      
-      - id: progress_title
-        type: Markdown
-        properties:
-          content: |
-            ##### Monthly Sale Target
-      - id: card_target
-        type: Card
+              contentGutter: 8
+            blocks:
+              - id: total_sales
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Revenue
+                  value: 253697
+                  prefix: "$"
+              - id: this_week
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Growth
+                  value: 14
+                  prefixIcon: FallOutlined
+                  suffix: "%"
+              - id: this_ratio
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Sell Out Ratio
+                  value: 0.43
+                  prefixIcon:
+                    name: WarningTwoTone
+                    twoToneColor: '#E8684A'
+              - id: this_leads
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: New Leads
+                  value: 102
+                  prefixIcon: ArrowDownOutlined
+              - id: this_store
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Top Store
+                  value: Denver
+                  prefixIcon: ShopOutlined
+              - id: this_category
+                type: Statistic
+                layout:
+                  span: 8
+                properties:
+                  title: Top Product
+                  value: Notepad
+                  prefixIcon: ShoppingCartOutlined
+      - id: box_progress
+        type: Box
+        layout:
+          span: 12
+          contentGutter: 8
         blocks:
-          - id: progress_1
-            type: Progress
+          - id: progress_title
+            type: Markdown
             properties:
-              percent: 74
-              showInfo: true
-              strokeWidth: 15
-          - id: progress_2
-            type: Progress
-            properties:
-              percent: 48
-              showInfo: true
-              strokeWidth: 15
-              strokeColor: '#ff7875'
-          - id: progress_3
-            type: Progress
-            properties:
-              percent: 63
-              showInfo: true
-              strokeWidth: 15
-              strokeColor: '#95de64'
+              content: "#### Targets"
+          - id: card_target
+            type: Card
+            blocks:
+              - id: progress_1_title
+                type: Markdown
+                style:
+                  marginTop: 8
+                properties:
+                  content: "##### Leads"
+              - id: progress_1
+                type: Progress
+                properties:
+                  percent: 86
+                  showInfo: true
+                  strokeWidth: 15
+                  strokeColor: '#5AD8A6'
+              - id: progress_2_title
+                type: Markdown
+                style:
+                  marginTop: 8
+                properties:
+                  content: "##### Deals Closed"
+              - id: progress_2
+                type: Progress
+                properties:
+                  percent: 48
+                  showInfo: true
+                  strokeWidth: 15
+                  strokeColor: '#E8684A'
+              - id: progress_3_title
+                type: Markdown
+                style:
+                  marginTop: 8
+                properties:
+                  content: "##### Sales"
+              - id: progress_3
+                type: Progress
+                properties:
+                  percent: 63
+                  showInfo: true
+                  strokeWidth: 15
+                  strokeColor: '#5D7092'
 
-  - id: bx_product
+      - id: bx_revenue
+        type: Box
+        layout:
+          contentGutter: 8
+        blocks:
+          - id: title_sales_by_month
+            type: Markdown
+            properties:
+              content: |
+                #### Revenue by Month
+          - id: sales_by_month_card
+            type: Card
+            blocks:
+              - id: sales_by_month
+                type: AmCharts4XY
+                properties:
+                  data:
+                    _request: get_sales_by_month
+                  height: 360
+                  xAxes:
+                    - type: DateAxis
+                      id: month
+                      title:
+                        text: Month
+                      renderer:
+                        minGridDistance: 40
+                  yAxes:
+                    - type: ValueAxis
+                      min: 0
+                      title:
+                        text: Revenue
+                  legend:
+                    type: Legend
+                    markers:
+                      width: 15
+                      height: 15
+                  cursor:
+                    type: XYCursor
+                    lineY:
+                      disabled: true
+                  series:
+                    - type: LineSeries
+                      name: Austin
+                      stroke: '#5B8FF9'
+                      fill: '#5B8FF9'
+                      fillOpacity: 1
+                      stacked: true
+                      legendSettings:
+                        itemValueText: "$ {valueY}"
+                      dataFields:
+                        dateX: month
+                        valueY: Austin
+                    - type: LineSeries
+                      name: Denver
+                      stroke: '#5AD8A6'
+                      fill: '#5AD8A6'
+                      fillOpacity: 1
+                      stacked: true
+                      legendSettings:
+                        itemValueText: "$ {valueY}"
+                      dataFields:
+                        dateX: month
+                        valueY: Denver
+                    - type: LineSeries
+                      name: London
+                      stroke: '#5D7092'
+                      fill: '#5D7092'
+                      fillOpacity: 1
+                      stacked: true
+                      legendSettings:
+                        itemValueText: "$ {valueY}"
+                      dataFields:
+                        dateX: month
+                        valueY: London
+                    - type: LineSeries
+                      name: New York
+                      stroke: '#F6BD16'
+                      fill: '#F6BD16'
+                      fillOpacity: 1
+                      stacked: true
+                      legendSettings:
+                        itemValueText: "$ {valueY}"
+                      dataFields:
+                        dateX: month
+                        valueY: New York
+                    - type: LineSeries
+                      name: San Diego
+                      stroke: '#E8684A'
+                      fill: '#E8684A'
+                      fillOpacity: 1
+                      stacked: true
+                      legendSettings:
+                        itemValueText: "$ {valueY}"
+                      dataFields:
+                        dateX: month
+                        valueY: San Diego
+                    - type: LineSeries
+                      name: Seattle
+                      stroke: '#6DC8EC'
+                      fill: '#6DC8EC'
+                      fillOpacity: 1
+                      stacked: true
+                      legendSettings:
+                        itemValueText: "$ {valueY}"
+                      dataFields:
+                        dateX: month
+                        valueY: Seattle
+
+  - id: box_product
     type: Box
     layout:
       span: 8
+      contentGutter: 8
     blocks:
       - id: title_product_pie
         type: Markdown
@@ -221,10 +386,9 @@ blocks:
         blocks:
           - id: chart_product_pie
             type: AmCharts4Pie
-            style:
-              height: 340
             properties:
               innerRadius: 30%
+              height: 340
               data:
                 _request: get_product_sales
               series:
@@ -232,17 +396,15 @@ blocks:
                   alignLabels: false
                   colors:
                     list:
-                      - '#95de64'
-                      - '#69c0ff'
-                      - '#ff7875'
-                      - '#fadb14'
-                      - '#5cdbd3'
-                      - '#ffc069'
-                      - '#b37feb'
-                      - '#ff85c0'
-
-
-                  ticks: 
+                      - '#5B8FF9'
+                      - '#5AD8A6'
+                      - '#5D7092'
+                      - '#F6BD16'
+                      - '#E8684A'
+                      - '#6DC8EC'
+                      - '#9270CA'
+                      - '#FF9D4D'
+                  ticks:
                     disabled: true
                   labels:
                     hideOversized: true
@@ -261,109 +423,52 @@ blocks:
                   dataFields:
                     value: count
                     category: name
-  - id: bx_revenue
-    type: Box
-    layout: 
-      span: 12
-    blocks:
-      - id: title_sales_by_month
-        type: Markdown
-        properties:
-          content: |
-            #### Revenue by Month
-      - id: sales_by_month_card
-        type: Card
-        blocks:
-          - id: sales_by_month
-            type: AmCharts4XY
-            style:
-              height: 300
-            properties:
-              data:
-                _request: get_sales_by_month
-              xAxes:
-                - type: DateAxis
-                  title:
-                    text: Month
-                  renderer:
-                    minGridDistance: 40
-              yAxes:
-                - type: ValueAxis
-                  min: 0
-                  title:
-                    text: Revenue
-              series:
-                - type: LineSeries
-                  name: Paid
-                  stroke: '#69c0ff'
-                  fill: '#69c0ff'
-                  fillOpacity: 0.3
-                  strokeWidth: 2
-                  tensionX: 0.9
-                  tensionY: 0.9
-                  legendSettings:
-                    itemValueText: "{valueY}"
-                  dataFields:
-                    dateX: month
-                    valueY: revenue
-                    count: count
-                  bullets:
-                    - type: CircleBullet
-                      tooltipText: "Total Revenue: $ {valueY}\nCount: {count}"
-                      fill: '#69c0ff'
-                      strokeWidth: 0
-                      scale: 0.5
-                      states:
-                        hover:
-                          properties:
-                            scale: 1.2
 
-  - id: bx_store
-    type: Box
-    layout: 
-      span: 12
-    blocks:
-      - id: title_store_by_month
-        type: Markdown
-        properties:
-          content: |
-            #### Current Month's Revenue by Store
-      - id: store_by_month_card
-        type: Card
-        blocks:
-          - id: feedback_by_month
-            type: AmCharts4XY
-            style:
-              height: 300
-            properties:
-              data:
-                _request: get_store_sales
-              xAxes:
-                - type: CategoryAxis
-                  dataFields:
-                    category: storeLocation
-                  title:
-                    text: Store
-                  renderer:
-                    minGridDistance: 40
-              yAxes:
-                - type: ValueAxis
-                  min: 0
-                  title:
-                    text: Revenue
-                  
-              series:
-                - type: ColumnSeries
-                  name: Revenue
-                  fillOpacity: 0.3
-                  strokeWidth: 2
-                  legendSettings:
-                    itemValueText: "{valueY}"
-                  dataFields:
-                    categoryX: storeLocation
-                    valueY: revenue
-                  columns:
-                    tooltipText: "{valueY}"
-                    fill: '#ff7875'
-                    stroke: '#ff7875'
-              
+  # - id: bx_store
+  #   type: Box
+  #   layout:
+  #     span: 12
+  #     contentGutter: 8
+  #   blocks:
+  #     - id: title_store_by_month
+  #       type: Markdown
+  #       properties:
+  #         content: |
+  #           #### Current Month's Revenue by Store
+  #     - id: store_by_month_card
+  #       type: Card
+  #       blocks:
+  #         - id: feedback_by_month
+  #           type: AmCharts4XY
+  #           properties:
+  #             data:
+  #               _request: get_store_sales
+  #             height: 300
+  #             xAxes:
+  #               - type: CategoryAxis
+  #                 dataFields:
+  #                   category: storeLocation
+  #                 title:
+  #                   text: Store
+  #                 renderer:
+  #                   minGridDistance: 40
+  #             yAxes:
+  #               - type: ValueAxis
+  #                 min: 0
+  #                 title:
+  #                   text: Revenue
+
+  #             series:
+  #               - type: ColumnSeries
+  #                 name: Revenue
+  #                 fillOpacity: 0.3
+  #                 strokeWidth: 2
+  #                 legendSettings:
+  #                   itemValueText: "{valueY}"
+  #                 dataFields:
+  #                   categoryX: storeLocation
+  #                   valueY: revenue
+  #                 columns:
+  #                   tooltipText: "{valueY}"
+  #                   fill: '#ff7875'
+  #                   stroke: '#ff7875'

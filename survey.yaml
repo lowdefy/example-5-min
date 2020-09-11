@@ -28,8 +28,8 @@ areas:
     blocks:
       - id: ant_styles
         type: Box
-        style:
-          _ref: templates/ant_styles.yaml
+        # style:
+        #   _ref: templates/ant_styles.yaml
         blocks:
           - id: box_blue
             type: Box
