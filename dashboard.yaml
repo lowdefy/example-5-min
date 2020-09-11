@@ -427,7 +427,7 @@ blocks:
         type: Markdown
         properties:
           content: |
-            #### Current Quater's Objectives
+            #### Current Quarter's Objectives
       - id: card_objectives
         type: Card
         layout:
